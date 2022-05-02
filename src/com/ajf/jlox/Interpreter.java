@@ -240,7 +240,7 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
 
 	@Override
 	public Void visitFunctionStatement (Statement.FunctionStatement statement) {
-		LoxFunction function = new LoxFunction(statement);
+		LoxFunction function = new LoxFunction(statement, environment);
 		environment.define(statement.name.lexeme, function);
 		return null;
 	}
