@@ -9,6 +9,7 @@ interface Visitor<R> {
  R visitFunctionStatement(FunctionStatement statement);
  R visitIfStatement(IfStatement statement);
  R visitPrintStatement(PrintStatement statement);
+ R visitReturnStatement(ReturnStatement statement);
  R visitWhileStatement(WhileStatement statement);
  R visitVariableStatement(VariableStatement statement);
 }
@@ -68,6 +69,18 @@ this.expression = expression;
 @Override
 <R>R accept(Visitor<R> visitor){
 return visitor.visitPrintStatement(this);
+}
+}
+static class ReturnStatement extends Statement{
+final  Token keyword;
+final  Expression value;
+ReturnStatement( Token keyword, Expression value) {
+this.keyword = keyword;
+this.value = value;
+}
+@Override
+<R>R accept(Visitor<R> visitor){
+return visitor.visitReturnStatement(this);
 }
 }
 static class WhileStatement extends Statement{

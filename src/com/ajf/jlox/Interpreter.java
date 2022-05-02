@@ -240,6 +240,8 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
 
 	@Override
 	public Void visitFunctionStatement (Statement.FunctionStatement statement) {
+		LoxFunction function = new LoxFunction(statement);
+		environment.define(statement.name.lexeme, function);
 		return null;
 	}
 
@@ -258,6 +260,16 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
 		Object value = evaluateExpression(statement.expression);
 		System.out.println(stringify(value));
 		return null;
+	}
+
+	@Override
+	public Void visitReturnStatement (Statement.ReturnStatement statement) {
+		Object value = null;
+		if (statement.value != null) {
+			value = evaluateExpression(statement.value);
+		}
+
+		throw new Return(value);
 	}
 
 	@Override

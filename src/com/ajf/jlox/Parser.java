@@ -64,9 +64,24 @@ public class Parser {
 			return new Statement.BlockStatement(block());
 		} else if (matchTokenTypeWithNextToBeConsumedToken(FUN)) {
 			return function("function");
+		} else if (matchTokenTypeWithNextToBeConsumedToken(RETURN)) {
+			return returnStatement();
 		}
 
 		return expressionStatement();
+	}
+
+	private Statement returnStatement () {
+		Token keyword = getMostRecentlyConsumedToken();
+
+		Expression value = null;
+
+		if (getNextToBeConsumedToken().type != SEMICOLON) {
+			value = expression();
+		}
+
+		checkForToken(SEMICOLON, "Expect ';' after return value.");
+		return new Statement.ReturnStatement(keyword, value);
 	}
 
 	private Statement function (String kind) {

@@ -33,6 +33,7 @@ public class GenerateAST {
 				"FunctionStatement : Token name, List<Token> params,List<Statement> body",
 				"IfStatement : Expression condition, Statement thenBranch, Statement elseBranch",
 				"PrintStatement : Expression expression",
+				"ReturnStatement: Token keyword, Expression value",
 				"WhileStatement : Expression condition, Statement body",
 				"VariableStatement : Token variableName, Expression initializer"
 		));
