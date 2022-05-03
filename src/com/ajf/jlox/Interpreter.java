@@ -1,10 +1,14 @@
 package com.ajf.jlox;
 
+import javax.xml.namespace.QName;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Interpreter implements Expression.Visitor<Object>, Statement.Visitor<Void> {
 	final Environment globals = new Environment();
+	private final Map<Expression, Integer> locals = new HashMap<>();
 	private Environment environment = globals;
 
 	Interpreter () {
@@ -137,7 +141,17 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
 
 	@Override
 	public Object visitVariableExpression (Expression.VariableExpression expression) {
-		return environment.getVariable(expression.variableName);
+		return lookupVariable(expression.variableName, expression);
+	}
+
+	private Object lookupVariable (Token variableToken, Expression.VariableExpression expression) {
+		Integer distance = locals.get(expression);
+
+		if (distance != null) {
+			return environment.getAt(distance, variableToken.lexeme);
+		} else {
+			return globals.getVariable(variableToken);
+		}
 	}
 
 	private boolean isEqual (Object left, Object right) {
@@ -294,8 +308,19 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
 	@Override
 	public Object visitAssignExpression (Expression.AssignExpression expression) {
 		Object value = evaluateExpression(expression.value);
-		environment.assign(expression.variableName, value);
+
+		Integer distance = locals.get(expression);
+		if (distance != null) {
+			environment.assignAt(distance, expression.variableName, value);
+		} else {
+			globals.assign(expression.variableName, value);
+		}
+
 		return value;
+	}
+
+	void resolve (Expression expression, int depth) {
+		locals.put(expression, depth);
 	}
 }
 

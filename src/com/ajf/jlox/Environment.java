@@ -1,5 +1,6 @@
 package com.ajf.jlox;
 
+import javax.swing.text.html.parser.AttributeList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,7 +9,6 @@ public class Environment {
 	private final Environment enclosingEnvironment;
 
 	public Environment () {
-
 		this.enclosingEnvironment = null;
 	}
 
@@ -42,5 +42,25 @@ public class Environment {
 			throw new RuntimeError(variableName, "Undefined variable during assign '" + variableName.lexeme + "'.");
 		}
 
+	}
+
+	public Object getAt (Integer distance, String variableName) {
+		return findEnvironmentWithVariable(distance).variables.get(variableName);
+	}
+
+	private Environment findEnvironmentWithVariable (Integer distance) {
+		Environment environment = this;
+
+		for (int i = 0; i < distance; i++) {
+			environment = environment.enclosingEnvironment;
+		}
+
+		return environment;
+	}
+
+	public void assignAt (Integer distance, Token variableToken, Object value) {
+		Environment environment = findEnvironmentWithVariable(distance);
+
+		environment.variables.put(variableToken.lexeme, value);
 	}
 }
