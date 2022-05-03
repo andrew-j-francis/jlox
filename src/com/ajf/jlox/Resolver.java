@@ -75,6 +75,9 @@ public class Resolver implements Expression.Visitor<Void>, Statement.Visitor<Voi
 
 	@Override
 	public Void visitFunctionStatement (Statement.FunctionStatement statement) {
+		declare(statement.name);
+		define(statement.name);
+		resolveFunction(statement);
 		return null;
 	}
 
@@ -154,5 +157,16 @@ public class Resolver implements Expression.Visitor<Void>, Statement.Visitor<Voi
 				return;
 			}
 		}
+	}
+
+	private void resolveFunction (Statement.FunctionStatement function) {
+		beginScope();
+		for (Token param : function.params) {
+			declare(param);
+			define(param);
+		}
+
+		resolve(function.body);
+		endScope();
 	}
 }
