@@ -22,16 +22,25 @@ public class Resolver implements Expression.Visitor<Void>, Statement.Visitor<Voi
 
 	@Override
 	public Void visitBinaryExpression (Expression.BinaryExpression expression) {
+		resolve(expression.left);
+		resolve(expression.right);
 		return null;
 	}
 
 	@Override
 	public Void visitCallExpression (Expression.CallExpression expression) {
+		resolve(expression.callee);
+
+		for (Expression argument : expression.arguments) {
+			resolve(argument);
+		}
+
 		return null;
 	}
 
 	@Override
 	public Void visitGroupingExpression (Expression.GroupingExpression expression) {
+		resolve(expression.expression);
 		return null;
 	}
 
@@ -42,11 +51,14 @@ public class Resolver implements Expression.Visitor<Void>, Statement.Visitor<Voi
 
 	@Override
 	public Void visitLogicalExpression (Expression.LogicalExpression expression) {
+		resolve(expression.left);
+		resolve(expression.right);
 		return null;
 	}
 
 	@Override
 	public Void visitUnaryExpression (Expression.UnaryExpression expression) {
+		resolve(expression.right);
 		return null;
 	}
 
@@ -70,6 +82,7 @@ public class Resolver implements Expression.Visitor<Void>, Statement.Visitor<Voi
 
 	@Override
 	public Void visitExpressionStatement (Statement.ExpressionStatement statement) {
+		resolve(statement.expression);
 		return null;
 	}
 
@@ -83,21 +96,33 @@ public class Resolver implements Expression.Visitor<Void>, Statement.Visitor<Voi
 
 	@Override
 	public Void visitIfStatement (Statement.IfStatement statement) {
+		resolve(statement.condition);
+		resolve(statement.thenBranch);
+
+		if (statement.elseBranch != null) {
+			resolve(statement.elseBranch);
+		}
 		return null;
 	}
 
 	@Override
 	public Void visitPrintStatement (Statement.PrintStatement statement) {
+		resolve(statement.expression);
 		return null;
 	}
 
 	@Override
 	public Void visitReturnStatement (Statement.ReturnStatement statement) {
+		if (statement.value != null) {
+			resolve(statement.value);
+		}
 		return null;
 	}
 
 	@Override
 	public Void visitWhileStatement (Statement.WhileStatement statement) {
+		resolve(statement.condition);
+		resolve(statement.body);
 		return null;
 	}
 
