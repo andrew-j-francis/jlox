@@ -8,6 +8,7 @@ import java.util.Stack;
 public class Resolver implements Expression.Visitor<Void>, Statement.Visitor<Void> {
 	private final Interpreter interpreter;
 	private final Stack<Map<String, Boolean>> scopes = new Stack<>();
+	private FunctionType currentFunction = FunctionType.NONE;
 
 	public Resolver (Interpreter interpreter) {
 		this.interpreter = interpreter;
@@ -90,7 +91,7 @@ public class Resolver implements Expression.Visitor<Void>, Statement.Visitor<Voi
 	public Void visitFunctionStatement (Statement.FunctionStatement statement) {
 		declare(statement.name);
 		define(statement.name);
-		resolveFunction(statement);
+		resolveFunction(statement, FunctionType.FUNCTION);
 		return null;
 	}
 
@@ -113,6 +114,10 @@ public class Resolver implements Expression.Visitor<Void>, Statement.Visitor<Voi
 
 	@Override
 	public Void visitReturnStatement (Statement.ReturnStatement statement) {
+		if (currentFunction == FunctionType.NONE) {
+			Lox.error(statement.keyword, "Can't return from top-level code.");
+		}
+
 		if (statement.value != null) {
 			resolve(statement.value);
 		}
@@ -164,6 +169,9 @@ public class Resolver implements Expression.Visitor<Void>, Statement.Visitor<Voi
 		}
 
 		Map<String, Boolean> scope = scopes.peek();
+		if (scope.containsKey(name.lexeme)) {
+			Lox.error(name, "Variable with this name already exists in this scope");
+		}
 		scope.put(name.lexeme, false);
 	}
 
@@ -184,7 +192,10 @@ public class Resolver implements Expression.Visitor<Void>, Statement.Visitor<Voi
 		}
 	}
 
-	private void resolveFunction (Statement.FunctionStatement function) {
+	private void resolveFunction (Statement.FunctionStatement function, FunctionType functionType) {
+		FunctionType enclosingFunction = currentFunction;
+		currentFunction = functionType;
+
 		beginScope();
 		for (Token param : function.params) {
 			declare(param);
@@ -193,5 +204,6 @@ public class Resolver implements Expression.Visitor<Void>, Statement.Visitor<Voi
 
 		resolve(function.body);
 		endScope();
+		currentFunction = enclosingFunction;
 	}
 }
