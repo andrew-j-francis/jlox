@@ -328,6 +328,9 @@ public class Parser {
 		while (true) {
 			if (matchTokenTypeWithNextToBeConsumedToken(LEFT_PAREN)) {
 				expression = finishCall(expression);
+			} else if (matchTokenTypeWithNextToBeConsumedToken(DOT)) {
+				Token name = checkForToken(IDENTIFIER, "Expect property name after '.'");
+				expression = new Expression.GetExpression(expression, name);
 			} else {
 				break;
 			}
