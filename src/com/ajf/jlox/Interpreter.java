@@ -119,7 +119,6 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
 		((LoxInstance) object).set(expression.name, value);
 		return value;
 
-		return null;
 	}
 
 	@Override
