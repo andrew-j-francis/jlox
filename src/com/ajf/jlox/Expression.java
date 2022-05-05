@@ -8,6 +8,7 @@ interface Visitor<R> {
  R visitBinaryExpression(BinaryExpression expression);
  R visitCallExpression(CallExpression expression);
  R visitGetExpression(GetExpression expression);
+ R visitSetExpression(SetExpression expression);
  R visitGroupingExpression(GroupingExpression expression);
  R visitLiteralExpression(LiteralExpression expression);
  R visitLogicalExpression(LogicalExpression expression);
@@ -64,6 +65,20 @@ this.className = className;
 @Override
 <R>R accept(Visitor<R> visitor){
 return visitor.visitGetExpression(this);
+}
+}
+static class SetExpression extends Expression{
+final  Expression object;
+final  Token name;
+final  Expression value;
+SetExpression( Expression object, Token name, Expression value) {
+this.object = object;
+this.name = name;
+this.value = value;
+}
+@Override
+<R>R accept(Visitor<R> visitor){
+return visitor.visitSetExpression(this);
 }
 }
 static class GroupingExpression extends Expression{
