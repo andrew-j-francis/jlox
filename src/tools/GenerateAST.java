@@ -29,6 +29,7 @@ public class GenerateAST {
 		//Statements
 		defineAST(outputDir, "Statement", Arrays.asList(
 				"BlockStatement: List<Statement> statements",
+				"ClassStatement : Token className, List<Statement.FunctionStatement> methods",
 				"ExpressionStatement : Expression expression",
 				"FunctionStatement : Token name, List<Token> params,List<Statement> body",
 				"IfStatement : Expression condition, Statement thenBranch, Statement elseBranch",

@@ -82,6 +82,13 @@ public class Resolver implements Expression.Visitor<Void>, Statement.Visitor<Voi
 	}
 
 	@Override
+	public Void visitClassStatement (Statement.ClassStatement statement) {
+		declare(statement.className);
+		define(statement.className);
+		return null;
+	}
+
+	@Override
 	public Void visitExpressionStatement (Statement.ExpressionStatement statement) {
 		resolve(statement.expression);
 		return null;

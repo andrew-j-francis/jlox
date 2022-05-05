@@ -1,6 +1,5 @@
 package com.ajf.jlox;
 
-import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -229,6 +228,14 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
 	@Override
 	public Void visitBlockStatement (Statement.BlockStatement statement) {
 		executeBlock(statement.statements, new Environment(environment));
+		return null;
+	}
+
+	@Override
+	public Void visitClassStatement (Statement.ClassStatement statement) {
+		environment.define(statement.className.lexeme, null);
+		LoxClass newClass = new LoxClass(statement.className.lexeme);
+		environment.assign(statement.className, newClass);
 		return null;
 	}
 

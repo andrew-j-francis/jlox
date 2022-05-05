@@ -66,9 +66,26 @@ public class Parser {
 			return function("function");
 		} else if (matchTokenTypeWithNextToBeConsumedToken(RETURN)) {
 			return returnStatement();
+		} else if (matchTokenTypeWithNextToBeConsumedToken(CLASS)) {
+			return classDeclaration();
 		}
 
 		return expressionStatement();
+	}
+
+	private Statement classDeclaration () {
+		Token className = checkForToken(IDENTIFIER, "Expect class name.");
+
+		checkForToken(LEFT_BRACE, "Expect '(' before class body.");
+
+		List<Statement.FunctionStatement> methods = new ArrayList<>();
+		while (getMostRecentlyConsumedToken().type != RIGHT_BRACE && isNotAtEndOfFile()) {
+			methods.add((Statement.FunctionStatement) function("method"));
+		}
+
+		checkForToken(RIGHT_BRACE, "Expect ')' after class body");
+
+		return new Statement.ClassStatement(className, methods);
 	}
 
 	private Statement returnStatement () {
