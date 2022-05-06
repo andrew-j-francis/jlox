@@ -19,6 +19,8 @@ public class LoxInstance {
 	public Object get (Token className) {
 		if (fields.containsKey(className.lexeme)) {
 			return fields.get(className.lexeme);
+		} else if (newClass.findMethod(className.lexeme) != null) {
+			return newClass.findMethod(className.lexeme);
 		} else {
 			throw new RuntimeError(className, "Undefined property '" + className.lexeme + "'.");
 		}

@@ -258,7 +258,14 @@ public class Interpreter implements Expression.Visitor<Object>, Statement.Visito
 	@Override
 	public Void visitClassStatement (Statement.ClassStatement statement) {
 		environment.define(statement.className.lexeme, null);
-		LoxClass newClass = new LoxClass(statement.className.lexeme);
+		Map<String, LoxFunction> methods = new HashMap<>();
+		for (Statement.FunctionStatement method : statement.methods) {
+			LoxFunction function = new LoxFunction(method, environment);
+			methods.put(method.name.lexeme, function);
+		}
+
+		LoxClass newClass = new LoxClass(statement.className.lexeme, methods);
+
 		environment.assign(statement.className, newClass);
 		return null;
 	}
